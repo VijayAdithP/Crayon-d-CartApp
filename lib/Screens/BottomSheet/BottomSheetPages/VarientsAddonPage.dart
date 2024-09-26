@@ -5,20 +5,21 @@ import 'package:crayondcart/Components/GlobalComponents/Counter.dart';
 import 'package:crayondcart/Models/CartModel.dart';
 import 'package:crayondcart/Models/ProductsModel.dart';
 import 'package:crayondcart/Provider/CartProvider.dart';
+import 'package:crayondcart/Provider/controllers/CartRiverPod.dart';
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hexcolor/hexcolor.dart';
-import 'package:provider/provider.dart';
-
-class CatalogAddonPage extends StatefulWidget {
+ 
+class CatalogAddonPage extends ConsumerStatefulWidget {
   final Products products;
   const CatalogAddonPage({super.key, required this.products});
 
   @override
-  State<CatalogAddonPage> createState() => _CatalogAddonPageState();
+  ConsumerState<CatalogAddonPage> createState() => _CatalogAddonPageState();
 }
 
-class _CatalogAddonPageState extends State<CatalogAddonPage> {
+class _CatalogAddonPageState extends ConsumerState<CatalogAddonPage> {
   @override
   void initState() {
     super.initState();
@@ -27,6 +28,7 @@ class _CatalogAddonPageState extends State<CatalogAddonPage> {
   }
 
   List<CartItem> cart = [];
+  late CartProvider _cartState;
 
   int? selectedVariantIndex;
   double? selectedVariantPrice;
@@ -49,7 +51,7 @@ class _CatalogAddonPageState extends State<CatalogAddonPage> {
     });
   }
 
-  void decrementCounter() {
+  void  decrementCounter() {
     setState(() {
       if (_Itemcounter > 1) {
         _Itemcounter--;
@@ -60,45 +62,45 @@ class _CatalogAddonPageState extends State<CatalogAddonPage> {
     });
   }
 
-  void addToCart(BuildContext context) {
-    if (selectedVariantIndex != null) {
-      Varients selectedVariant =
-          widget.products.varients![selectedVariantIndex!];
+  // void addToCart(BuildContext context) {
+  //   if (selectedVariantIndex != null) {
+  //     Varients selectedVariant =
+  //         widget.products.varients![selectedVariantIndex!];
 
-      Provider.of<CartProvider>(context, listen: false).addToCart(
-        widget.products,
-        _Itemcounter,
-        selectedVariant,
-        _Itemcounter,
-      );
+  //     Provider.of<CartProvider>(context, listen: false).addToCart(
+  //       widget.products,
+  //       _Itemcounter,
+  //       selectedVariant,
+  //       _Itemcounter,
+  //     );
 
-      setState(() {
-        isVarientSelected = false;
-        _Itemcounter = 1;
-        selectedVariantIndex = null;
-      });
+  //     setState(() {
+  //       isVarientSelected = false;
+  //       _Itemcounter = 1;
+  //       selectedVariantIndex = null;
+  //     });
 
-      Navigator.of(context).pop();
-      var snackBar = SnackBar(
-        duration: const Duration(milliseconds: 700),
-        dismissDirection: DismissDirection.startToEnd,
-        shape: const StadiumBorder(),
-        backgroundColor: Colors.green,
-        content: const Text("Item successfully added"),
-        behavior: SnackBarBehavior.floating,
-        margin: EdgeInsets.only(
-          bottom: MediaQuery.of(context).size.height - 70,
-          left: 10,
-          right: 10,
-        ),
-      );
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-    } else {
-      setState(() {
-        isVarientSelected = true;
-      });
-    }
-  }
+  //     Navigator.of(context).pop();
+  //     var snackBar = SnackBar(
+  //       duration: const Duration(milliseconds: 700),
+  //       dismissDirection: DismissDirection.startToEnd,
+  //       shape: const StadiumBorder(),
+  //       backgroundColor: Colors.green,
+  //       content: const Text("Item successfully added"),
+  //       behavior: SnackBarBehavior.floating,
+  //       margin: EdgeInsets.only(
+  //         bottom: MediaQuery.of(context).size.height - 70,
+  //         left: 10,
+  //         right: 10,
+  //       ),
+  //     );
+  //     ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  //   } else {
+  //     setState(() {
+  //       isVarientSelected = true;
+  //     });
+  //   }
+  // }
 
   BorderRadius dynamicBorder = const BorderRadius.only(
     topLeft: Radius.circular(10),
@@ -111,6 +113,7 @@ class _CatalogAddonPageState extends State<CatalogAddonPage> {
   int selectedAddon = 0;
   @override
   Widget build(BuildContext context) {
+    _cartState = ref.watch(cartProvider.notifier);
     return Wrap(
       children: [
         Padding(
@@ -467,7 +470,46 @@ class _CatalogAddonPageState extends State<CatalogAddonPage> {
                         Expanded(
                           child: GestureDetector(
                             onTap: () {
-                              addToCart(context);
+                              if (selectedVariantIndex != null) {
+                                Varients selectedVariant = widget
+                                    .products.varients![selectedVariantIndex!];
+
+                                _cartState.addToCart(
+                                  widget.products,
+                                  _Itemcounter,
+                                  selectedVariant,
+                                  _Itemcounter,
+                                );
+
+                                setState(() {
+                                  isVarientSelected = false;
+                                  _Itemcounter = 1;
+                                  selectedVariantIndex = null;
+                                });
+
+                                Navigator.of(context).pop();
+                                var snackBar = SnackBar(
+                                  duration: const Duration(milliseconds: 700),
+                                  dismissDirection: DismissDirection.startToEnd,
+                                  shape: const StadiumBorder(),
+                                  backgroundColor: Colors.green,
+                                  content:
+                                      const Text("Item successfully added"),
+                                  behavior: SnackBarBehavior.floating,
+                                  margin: EdgeInsets.only(
+                                    bottom:
+                                        MediaQuery.of(context).size.height - 70,
+                                    left: 10,
+                                    right: 10,
+                                  ),
+                                );
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(snackBar);
+                              } else {
+                                setState(() {
+                                  isVarientSelected = true;
+                                });
+                              }
                             },
                             child: Container(
                               decoration: BoxDecoration(

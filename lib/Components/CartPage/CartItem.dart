@@ -1,29 +1,34 @@
 import 'package:crayondcart/Models/CartModel.dart';
 import 'package:crayondcart/Provider/CartProvider.dart';
+import 'package:crayondcart/Provider/controllers/CartRiverPod.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class CartItems extends StatefulWidget {
-  final CartProvider cart;
-  final Function decrementCounter;
-  final Function incrementCounter;
+class CartItems extends ConsumerStatefulWidget {
+  final CartState cart;
+  // final Function decrementCounter;
+  // final Function incrementCounter;
   int? itemCount;
   double? totalPrice;
 
   CartItems(
       {super.key,
       required this.cart,
-      required this.decrementCounter,
-      required this.incrementCounter,
+      // required this.decrementCounter,
+      // required this.incrementCounter,
       required this.itemCount,
       required this.totalPrice});
 
   @override
-  State<CartItems> createState() => _CartItemsState();
+  ConsumerState<CartItems> createState() => _CartItemsState();
 }
 
-class _CartItemsState extends State<CartItems> {
+class _CartItemsState extends ConsumerState<CartItems> {
+  late CartProvider _cartState;
   @override
   Widget build(BuildContext context) {
+    _cartState = ref.watch(cartProvider.notifier);
+
     return ListView.builder(
       itemCount: widget.cart.cartItems.length,
       itemBuilder: (context, index) {
@@ -92,7 +97,7 @@ class _CartItemsState extends State<CartItems> {
                               children: [
                                 GestureDetector(
                                   onTap: () {
-                                    widget.decrementCounter(index);
+                                    _cartState.decrementCounter(index);
                                   },
                                   child: const Icon(Icons.remove),
                                 ),
@@ -107,7 +112,7 @@ class _CartItemsState extends State<CartItems> {
                                 const SizedBox(width: 10),
                                 GestureDetector(
                                   onTap: () {
-                                    widget.incrementCounter(index);
+                                    _cartState.incrementCounter(index);
                                   },
                                   child: const Icon(Icons.add),
                                 ),

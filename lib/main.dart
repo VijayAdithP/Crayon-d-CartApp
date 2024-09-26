@@ -1,9 +1,8 @@
-import 'package:crayondcart/Provider/CartProvider.dart';
 import 'package:crayondcart/Screens/CartPage.dart';
 import 'package:crayondcart/Screens/CatalogPage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -11,9 +10,8 @@ void main() async {
     [DeviceOrientation.portraitUp],
   );
   runApp(
-    ChangeNotifierProvider(
-      create: (_) => CartProvider(),
-      child: const HomePage(),
+    const ProviderScope(
+      child: HomePage(),
     ),
   );
 }
@@ -50,7 +48,6 @@ class HomePage extends StatelessWidget {
         '/': (context) => const CartPage(),
         '/CatalogPage': (context) => const CatalogPage(),
       },
-      // home: const CartPage(),
     );
   }
 }

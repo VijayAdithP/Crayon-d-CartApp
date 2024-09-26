@@ -7,62 +7,65 @@ import 'package:crayondcart/Components/CartPage/ProfileCard.dart';
 import 'package:crayondcart/Components/GlobalComponents/Dot.dart';
 import 'package:crayondcart/Components/GlobalComponents/OrderId.dart';
 import 'package:crayondcart/Components/GlobalComponents/Tables.dart';
-import 'package:crayondcart/Models/CartModel.dart';
 import 'package:crayondcart/Provider/CartProvider.dart';
+// import 'package:crayondcart/Provider/controllers/CartRiverPod.dart';
 import 'package:crayondcart/Screens/PaymentSummary.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hexcolor/hexcolor.dart';
-import 'package:provider/provider.dart';
 
-class CartPage extends StatefulWidget {
+class CartPage extends ConsumerStatefulWidget {
   const CartPage({super.key});
 
   @override
-  State<CartPage> createState() => _CartPageState();
+  ConsumerState<CartPage> createState() => _CartPageState();
 }
 
-class _CartPageState extends State<CartPage> {
+class _CartPageState extends ConsumerState<CartPage> {
   int? itemCount;
   double? totalPrice;
+  // late CartProvider _cartState;
 
   @override
   Widget build(BuildContext context) {
-    var cart = Provider.of<CartProvider>(context);
+    // _cartState = ref.watch(cartProvider.notifier);
+    final cartState = ref.watch(cartProvider);
+    // var cart = Provider.of<CartProvider>(context);
 
-    void incrementCounter(int index) {
-      setState(() {
-        CartItem currentItem = cart.cartItems[index];
+    // void incrementCounter(int index) {
+    //   setState(() {
+    //     CartItem currentItem = cart.cartItems[index];
 
-        currentItem.itemcount = currentItem.itemcount! + 1;
-        currentItem.quantity += 1;
+    //     currentItem.itemcount = currentItem.itemcount! + 1;
+    //     currentItem.quantity += 1;
 
-        double itemPrice = currentItem.product.price!;
-        double variantPrice = currentItem.selectedVariant?.price ?? 0.0;
+    //     double itemPrice = currentItem.product.price!;
+    //     double variantPrice = currentItem.selectedVariant?.price ?? 0.0;
 
-        currentItem.totalPrice += (itemPrice + variantPrice);
-      });
-    }
+    //     currentItem.totalPrice += (itemPrice + variantPrice);
+    //   });
+    // }
 
-    void decrementCounter(int index) {
-      setState(() {
-        CartItem currentItem = cart.cartItems[index];
+    // void decrementCounter(int index) {
+    //   setState(() {
+    //     CartItem currentItem = cart.cartItems[index];
 
-        if (currentItem.itemcount! > 1) {
-          currentItem.itemcount = currentItem.itemcount! - 1;
-          currentItem.quantity -= 1;
+    //     if (currentItem.itemcount! > 1) {
+    //       currentItem.itemcount = currentItem.itemcount! - 1;
+    //       currentItem.quantity -= 1;
 
-          double itemPrice = currentItem.product.price!;
-          double variantPrice = currentItem.selectedVariant?.price ?? 0.0;
+    //       double itemPrice = currentItem.product.price!;
+    //       double variantPrice = currentItem.selectedVariant?.price ?? 0.0;
 
-          currentItem.totalPrice -= (itemPrice + variantPrice);
-        } else {
-          cart.removeFromCart(currentItem);
-        }
-      });
-    }
+    //       currentItem.totalPrice -= (itemPrice + variantPrice);
+    //     } else {
+    //       cart.removeFromCart(currentItem);
+    //     }
+    //   });
+    // }
 
     double grandTotal = 0.0;
-    for (var item in cart.cartItems) {
+    for (var item in cartState.cartItems) {
       grandTotal += item.totalPrice;
     }
     // for (var item in cart.cartItems) {
@@ -217,7 +220,7 @@ class _CartPageState extends State<CartPage> {
               Container(
                 decoration: BoxDecoration(
                   color: HexColor("#e5e5e5"),
-                  border: cart.cartItems.isEmpty
+                  border: cartState.cartItems.isEmpty
                       ? null
                       : Border(
                           bottom: BorderSide(
@@ -225,7 +228,7 @@ class _CartPageState extends State<CartPage> {
                           ),
                         ),
                   boxShadow: [
-                    cart.cartItems.isEmpty
+                    cartState.cartItems.isEmpty
                         ? const BoxShadow(
                             color: Color.fromARGB(20, 0, 0, 0),
                             blurRadius: 10,
@@ -272,24 +275,24 @@ class _CartPageState extends State<CartPage> {
               ),
               Expanded(
                 child: SizedBox(
-                  child: cart.cartItems.isEmpty
+                  child: cartState.cartItems.isEmpty
                       ? const EmptyCart()
                       : CartItems(
-                          cart: cart,
-                          decrementCounter: decrementCounter,
-                          incrementCounter: incrementCounter,
+                          cart: cartState,
+                          // decrementCounter: _cartState.decrementCounter,
+                          // incrementCounter: _cartState.incrementCounter,
                           itemCount: itemCount,
                           totalPrice: totalPrice,
                         ),
                 ),
               ),
-              if (cart.cartItems.isNotEmpty)
+              if (cartState.cartItems.isNotEmpty)
                 GestureDetector(
                   onTap: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (context) => PaymentPage(
-                          totalAmount: grandTotal,
+                          totalAmount: cartState.grandTotal,
                         ),
                       ),
                     );
@@ -343,7 +346,7 @@ class _CartPageState extends State<CartPage> {
                                         ),
                                       ),
                                       Text(
-                                        cart.cartItems.length.toString(),
+                                        cartState.cartItems.length.toString(),
                                         style: const TextStyle(
                                           color: Colors.white,
                                           fontSize: 17,
