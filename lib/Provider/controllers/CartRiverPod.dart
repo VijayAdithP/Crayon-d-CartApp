@@ -25,7 +25,8 @@ class CartState {
 class CartProvider extends StateNotifier<CartState> {
   CartProvider() : super(CartState());
 
-  void addToCart(Products product, int quantity, Varients selectedVariant, int itemcount) {
+  void addToCart(
+      Products product, int quantity, Varients selectedVariant, int itemcount) {
     double basePrice = product.price!;
     double variantPrice = selectedVariant.price ?? 0.0;
     double totalPrice = basePrice + variantPrice;
@@ -47,7 +48,6 @@ class CartProvider extends StateNotifier<CartState> {
     double updatedGrandTotal = state.grandTotal;
 
     if (existingItem.quantity > 0) {
-      // Update existing item
       final updatedItem = existingItem.copyWith(
         quantity: existingItem.quantity + quantity,
         itemcount: existingItem.itemcount! + itemcount,
@@ -57,7 +57,6 @@ class CartProvider extends StateNotifier<CartState> {
       updatedCartItems[updatedCartItems.indexOf(existingItem)] = updatedItem;
       updatedGrandTotal += totalPrice * quantity;
     } else {
-      // Add new item
       updatedCartItems.add(
         CartItem(
           product: product,
@@ -70,7 +69,8 @@ class CartProvider extends StateNotifier<CartState> {
       updatedGrandTotal += totalPrice * quantity;
     }
 
-    state = state.copyWith(cartItems: updatedCartItems, grandTotal: updatedGrandTotal);
+    state = state.copyWith(
+        cartItems: updatedCartItems, grandTotal: updatedGrandTotal);
   }
 
   void removeFromCart(CartItem cartItem) {
@@ -79,7 +79,8 @@ class CartProvider extends StateNotifier<CartState> {
 
     double updatedGrandTotal = state.grandTotal - cartItem.totalPrice;
 
-    state = state.copyWith(cartItems: updatedCartItems, grandTotal: updatedGrandTotal);
+    state = state.copyWith(
+        cartItems: updatedCartItems, grandTotal: updatedGrandTotal);
   }
 
   void incrementCounter(int index) {

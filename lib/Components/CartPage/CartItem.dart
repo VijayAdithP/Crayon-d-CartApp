@@ -6,16 +6,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class CartItems extends ConsumerStatefulWidget {
   final CartState cart;
-  // final Function decrementCounter;
-  // final Function incrementCounter;
+
   int? itemCount;
   double? totalPrice;
 
   CartItems(
       {super.key,
       required this.cart,
-      // required this.decrementCounter,
-      // required this.incrementCounter,
       required this.itemCount,
       required this.totalPrice});
 
@@ -33,13 +30,9 @@ class _CartItemsState extends ConsumerState<CartItems> {
       itemCount: widget.cart.cartItems.length,
       itemBuilder: (context, index) {
         CartItem currentItem = widget.cart.cartItems[index];
-        // widget.itemCount = widget.cart.cartItems[index].itemcount!;
 
         final item = widget.cart.cartItems[index];
 
-        // widget.totalPrice = (widget.cart.cartItems[index].product.price! *
-        //         widget.cart.cartItems[index].itemcount!) +
-        //     item.selectedVariant!.price!;
         return Column(
           children: [
             SizedBox(

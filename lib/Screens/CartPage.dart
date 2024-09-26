@@ -8,8 +8,8 @@ import 'package:crayondcart/Components/GlobalComponents/Dot.dart';
 import 'package:crayondcart/Components/GlobalComponents/OrderId.dart';
 import 'package:crayondcart/Components/GlobalComponents/Tables.dart';
 import 'package:crayondcart/Provider/CartProvider.dart';
-// import 'package:crayondcart/Provider/controllers/CartRiverPod.dart';
 import 'package:crayondcart/Screens/PaymentSummary.dart';
+import 'package:crayondcart/Screens/StateShowCase.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hexcolor/hexcolor.dart';
@@ -24,54 +24,10 @@ class CartPage extends ConsumerStatefulWidget {
 class _CartPageState extends ConsumerState<CartPage> {
   int? itemCount;
   double? totalPrice;
-  // late CartProvider _cartState;
 
   @override
   Widget build(BuildContext context) {
-    // _cartState = ref.watch(cartProvider.notifier);
     final cartState = ref.watch(cartProvider);
-    // var cart = Provider.of<CartProvider>(context);
-
-    // void incrementCounter(int index) {
-    //   setState(() {
-    //     CartItem currentItem = cart.cartItems[index];
-
-    //     currentItem.itemcount = currentItem.itemcount! + 1;
-    //     currentItem.quantity += 1;
-
-    //     double itemPrice = currentItem.product.price!;
-    //     double variantPrice = currentItem.selectedVariant?.price ?? 0.0;
-
-    //     currentItem.totalPrice += (itemPrice + variantPrice);
-    //   });
-    // }
-
-    // void decrementCounter(int index) {
-    //   setState(() {
-    //     CartItem currentItem = cart.cartItems[index];
-
-    //     if (currentItem.itemcount! > 1) {
-    //       currentItem.itemcount = currentItem.itemcount! - 1;
-    //       currentItem.quantity -= 1;
-
-    //       double itemPrice = currentItem.product.price!;
-    //       double variantPrice = currentItem.selectedVariant?.price ?? 0.0;
-
-    //       currentItem.totalPrice -= (itemPrice + variantPrice);
-    //     } else {
-    //       cart.removeFromCart(currentItem);
-    //     }
-    //   });
-    // }
-
-    double grandTotal = 0.0;
-    for (var item in cartState.cartItems) {
-      grandTotal += item.totalPrice;
-    }
-    // for (var item in cart.cartItems) {
-    //   grandTotal += (item.product.price! * item.itemcount!) +
-    //       item.selectedVariant!.price!;
-    // }
 
     return Scaffold(
       backgroundColor: HexColor("#e5e5e5"),
@@ -94,12 +50,21 @@ class _CartPageState extends ConsumerState<CartPage> {
             size: 30,
           ),
         ),
-        actions: const [
-          NotificationBell(),
-          SizedBox(
+        actions: [
+          const NotificationBell(),
+          const SizedBox(
             width: 20,
           ),
-          ProfileCard(),
+          GestureDetector(
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const Stateshowcase(),
+                ),
+              );
+            },
+            child: const ProfileCard(),
+          ),
         ],
       ),
       body: Stack(
@@ -279,8 +244,6 @@ class _CartPageState extends ConsumerState<CartPage> {
                       ? const EmptyCart()
                       : CartItems(
                           cart: cartState,
-                          // decrementCounter: _cartState.decrementCounter,
-                          // incrementCounter: _cartState.incrementCounter,
                           itemCount: itemCount,
                           totalPrice: totalPrice,
                         ),
